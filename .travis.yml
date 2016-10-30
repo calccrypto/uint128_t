@@ -2,7 +2,6 @@ language: cpp
 
 compiler:
   - g++
-  - clang
 
 install:
   # have newer versions of g++ available

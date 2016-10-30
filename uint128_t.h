@@ -33,9 +33,9 @@ to do a general rewrite of this class.
 #ifndef __UINT128_T__
 #define __UINT128_T__
 
+#include <cstdint>
 #include <iostream>
 #include <stdexcept>
-#include <stdint.h>
 #include <utility>
 
 class uint128_t{
@@ -46,21 +46,21 @@ class uint128_t{
         // Constructors
         uint128_t();
         uint128_t(const uint128_t & rhs);
+        uint128_t(const uint128_t && rhs);
 
-        template <typename T> uint128_t(const T & rhs){
-            UPPER = 0;
-            LOWER = rhs;
-        }
+        template <typename T> uint128_t(const T & rhs)
+            : UPPER(0), LOWER(rhs)
+        {}
 
-        template <typename S, typename T> uint128_t(const S & upper_rhs, const T & lower_rhs){
-            UPPER = upper_rhs;
-            LOWER = lower_rhs;
-        }
+        template <typename S, typename T> uint128_t(const S & upper_rhs, const T & lower_rhs)
+            : UPPER(upper_rhs), LOWER(lower_rhs)
+        {}
 
         //  RHS input args only
 
         // Assignment Operator
         uint128_t operator=(const uint128_t & rhs);
+        uint128_t operator=(const uint128_t && rhs);
 
         template <typename T> uint128_t operator=(const T & rhs){
             UPPER = 0;

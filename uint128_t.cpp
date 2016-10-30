@@ -5,19 +5,27 @@ const uint128_t uint128_1(1);
 const uint128_t uint128_64(64);
 const uint128_t uint128_128(128);
 
-uint128_t::uint128_t(){
-    UPPER = 0;
-    LOWER = 0;
-}
+uint128_t::uint128_t()
+    : UPPER(0), LOWER(0)
+{}
 
-uint128_t::uint128_t(const uint128_t & rhs){
-    UPPER = rhs.UPPER;
-    LOWER = rhs.LOWER;
-}
+uint128_t::uint128_t(const uint128_t & rhs)
+    : UPPER(rhs.UPPER), LOWER(rhs.LOWER)
+{}
+
+uint128_t::uint128_t(const uint128_t && rhs)
+    : UPPER(std::move(rhs.UPPER)), LOWER(std::move(rhs.LOWER))
+{}
 
 uint128_t uint128_t::operator=(const uint128_t & rhs){
     UPPER = rhs.UPPER;
     LOWER = rhs.LOWER;
+    return *this;
+}
+
+uint128_t uint128_t::operator=(const uint128_t && rhs){
+    UPPER = std::move(rhs.UPPER);
+    LOWER = std::move(rhs.LOWER);
     return *this;
 }
 

@@ -1,0 +1,23 @@
+language: cpp
+
+compiler:
+  - g++
+  - clang
+
+install:
+  # have newer versions of g++ available
+  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+
+  # install packages
+  - sudo apt-get update -y
+  - sudo apt-get install -y g++-4.9
+
+  # force g++ to be g++-4.9
+  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 10
+  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 10
+
+before_script:
+  - make
+
+script:
+  - make test

@@ -199,33 +199,34 @@ uint128_t uint128_t::operator-=(const uint128_t & rhs){
 
 uint128_t uint128_t::operator*(const uint128_t & rhs) const{
     // split values into 4 32-bit parts
-    uint64_t top[4] ={UPPER >> 32, UPPER & 0xffffffff, LOWER >> 32, LOWER & 0xffffffff};
-    uint64_t bottom[4] ={rhs.UPPER >> 32, rhs.UPPER & 0xffffffff, rhs.LOWER >> 32, rhs.LOWER & 0xffffffff};
+    uint64_t top[4] = {UPPER >> 32, UPPER & 0xffffffff, LOWER >> 32, LOWER & 0xffffffff};
+    uint64_t bottom[4] = {rhs.UPPER >> 32, rhs.UPPER & 0xffffffff, rhs.LOWER >> 32, rhs.LOWER & 0xffffffff};
     uint64_t products[4][4];
 
+    // multiply each component of the values
     for(int y = 3; y > -1; y--){
         for(int x = 3; x > -1; x--){
             products[3 - x][y] = top[x] * bottom[y];
         }
     }
 
-    // initial row
-    uint64_t fourth32 = products[0][3] & 0xffffffff;
-    uint64_t third32 = (products[0][2] & 0xffffffff) + (products[0][3] >> 32);
+    // first row
+    uint64_t fourth32 = (products[0][3] & 0xffffffff);
+    uint64_t third32  = (products[0][2] & 0xffffffff) + (products[0][3] >> 32);
     uint64_t second32 = (products[0][1] & 0xffffffff) + (products[0][2] >> 32);
-    uint64_t first32 = (products[0][0] & 0xffffffff) + (products[0][1] >> 32);
+    uint64_t first32  = (products[0][0] & 0xffffffff) + (products[0][1] >> 32);
 
     // second row
-    third32 += products[1][3] & 0xffffffff;
+    third32  += (products[1][3] & 0xffffffff);
     second32 += (products[1][2] & 0xffffffff) + (products[1][3] >> 32);
-    first32 += (products[1][1] & 0xffffffff) + (products[1][2] >> 32);
+    first32  += (products[1][1] & 0xffffffff) + (products[1][2] >> 32);
 
     // third row
-    second32 += products[2][3] & 0xffffffff;
-    first32 += (products[2][2] & 0xffffffff) + (products[2][3] >> 32);
+    second32 += (products[2][3] & 0xffffffff);
+    first32  += (products[2][2] & 0xffffffff) + (products[2][3] >> 32);
 
     // fourth row
-    first32 += products[3][3] & 0xffffffff;
+    first32  += (products[3][3] & 0xffffffff);
 
     // combines the values, taking care of carry over
     return uint128_t(first32 << 32, 0) + uint128_t(third32 >> 32, third32 << 32) + uint128_t(second32, 0) + uint128_t(fourth32);
@@ -309,11 +310,11 @@ uint128_t uint128_t::operator--(int){
     return temp;
 }
 
-uint64_t uint128_t::upper() const{
+const uint64_t & uint128_t::upper() const{
     return UPPER;
 }
 
-uint64_t uint128_t::lower() const{
+const uint64_t & uint128_t::lower() const{
     return LOWER;
 }
 

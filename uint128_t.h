@@ -1,7 +1,7 @@
 /*
 uint128_t.h
 An unsigned 128 bit integer type for C++
-Copyright (c) 2014 Jason Lee @ calccrypto at gmail.com
+Copyright (c) 2013, 2014, 2016 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -255,8 +255,8 @@ class uint128_t{
         uint128_t operator--(int);
 
         // Get private values
-        uint64_t upper() const;
-        uint64_t lower() const;
+        const uint64_t & upper() const;
+        const uint64_t & lower() const;
 
         // Get bitsize of value
         uint8_t bits() const;

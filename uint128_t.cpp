@@ -191,7 +191,7 @@ uint128_t uint128_t::operator+(const uint128_t & rhs) const{
 }
 
 uint128_t uint128_t::operator+=(const uint128_t & rhs){
-    UPPER = rhs.UPPER + UPPER + ((LOWER + rhs.LOWER) < LOWER);
+    UPPER += rhs.UPPER + ((LOWER + rhs.LOWER) < LOWER);
     LOWER += rhs.LOWER;
     return *this;
 }
@@ -236,8 +236,19 @@ uint128_t uint128_t::operator*(const uint128_t & rhs) const{
     // fourth row
     first32  += (products[3][3] & 0xffffffff);
 
-    // combines the values, taking care of carry over
-    return uint128_t(first32 << 32, 0) + uint128_t(third32 >> 32, third32 << 32) + uint128_t(second32, 0) + uint128_t(fourth32);
+    // move carry to next digit
+    third32  += fourth32 >> 32;
+	second32 += third32  >> 32;
+	first32  += second32 >> 32;
+
+    // remove carry from current digit
+	fourth32 &= 0xffffffff;
+    third32  &= 0xffffffff;
+    second32 &= 0xffffffff;
+    first32  &= 0xffffffff;
+
+    // combine components
+    return uint128_t((first32 << 32) | second32, (third32 << 32) | fourth32);
 }
 
 uint128_t uint128_t::operator*=(const uint128_t & rhs){
@@ -260,20 +271,19 @@ std::pair <uint128_t, uint128_t> uint128_t::divmod(const uint128_t & lhs, const 
         return std::pair <uint128_t, uint128_t> (uint128_0, lhs);
     }
 
-    std::pair <uint128_t, uint128_t> qr(uint128_0, lhs);
-    uint128_t copyd = rhs << (lhs.bits() - rhs.bits());
-    uint128_t adder = uint128_1 << (lhs.bits() - rhs.bits());
-    if (copyd > qr.second){
-        copyd >>= uint128_1;
-        adder >>= uint128_1;
-    }
-    while (qr.second >= rhs){
-        if (qr.second >= copyd){
-            qr.second -= copyd;
-            qr.first |= adder;
+    std::pair <uint128_t, uint128_t> qr (uint128_0, uint128_0);
+    for(uint8_t x = lhs.bits(); x > 0; x--){
+        qr.first  <<= 1;
+        qr.second <<= 1;
+
+        if ((lhs >> (x - 1)) & 1){
+            qr.second++;
         }
-        copyd >>= uint128_1;
-        adder >>= uint128_1;
+
+        if (qr.second >= rhs){
+            qr.second -= rhs;
+            qr.first++;
+        }
     }
     return qr;
 }
@@ -288,7 +298,7 @@ uint128_t uint128_t::operator/=(const uint128_t & rhs){
 }
 
 uint128_t uint128_t::operator%(const uint128_t & rhs) const{
-    return *this - (rhs * (*this / rhs));
+    return divmod(*this, rhs).second;
 }
 
 uint128_t uint128_t::operator%=(const uint128_t & rhs){

@@ -1,7 +1,8 @@
 /*
 uint128_t.h
 An unsigned 128 bit integer type for C++
-Copyright (c) 2013, 2014, 2016 Jason Lee @ calccrypto at gmail.com
+
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

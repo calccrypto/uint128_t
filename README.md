@@ -2,7 +2,7 @@
 
 An unsigned 128 bit integer type for C++
 
-Copyright (c) 2013, 2014, 2016 Jason Lee @ calccrypto at gmail.com
+Copyright (c) 2013 - 2017 Jason Lee @ calccrypto at gmail.com
 
 Please see LICENSE file for license.
 

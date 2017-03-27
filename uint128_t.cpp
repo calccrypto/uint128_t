@@ -364,7 +364,7 @@ uint8_t uint128_t::bits() const{
 
 std::string uint128_t::str(uint8_t base, const unsigned int & len) const{
     if ((base < 2) || (base > 16)){
-        throw std::invalid_argument("Base must be in th range 2-16");
+        throw std::invalid_argument("Base must be in the range [2, 16]");
     }
     std::string out = "";
     if (!(*this)){

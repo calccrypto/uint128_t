@@ -10,7 +10,7 @@ TEST(Arithmetic, modulo){
     EXPECT_EQ(val % val_mod, uint128_t(0x7f598f328cc265bfULL));
 
     // no remainder
-    const uint128_t val_0   = uint128_t(0xfedcba9876543210, 0);
+    const uint128_t val_0  (0xfedcba9876543210, 0);
     EXPECT_EQ(val_0 % val_mod, 0);
 
     // mod 0

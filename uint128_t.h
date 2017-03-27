@@ -439,7 +439,7 @@ template <typename T> uint128_t operator%(const T & lhs, const uint128_t & rhs){
 }
 
 template <typename T> T & operator%=(T & lhs, const uint128_t & rhs){
-    return (lhs = static_cast <T> (uint128_t(lhs) % rhs));
+    return lhs = static_cast <T> (uint128_t(lhs) % rhs);
 }
 
 // IO Operator

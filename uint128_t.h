@@ -225,7 +225,8 @@ class uint128_t{
         uint128_t & operator-=(const uint128_t & rhs);
 
         template <typename T> uint128_t & operator-=(const T & rhs){
-            return *this = *this - rhs;
+            *this = *this - rhs;
+            return *this;
         }
 
         uint128_t operator*(const uint128_t & rhs) const;
@@ -237,7 +238,8 @@ class uint128_t{
         uint128_t & operator*=(const uint128_t & rhs);
 
         template <typename T> uint128_t & operator*=(const T & rhs){
-            return *this = *this * uint128_t(rhs);
+            *this = *this * uint128_t(rhs);
+            return *this;
         }
 
     private:
@@ -253,7 +255,8 @@ class uint128_t{
         uint128_t & operator/=(const uint128_t & rhs);
 
         template <typename T> uint128_t & operator/=(const T & rhs){
-            return *this = *this / uint128_t(rhs);
+            *this = *this / uint128_t(rhs);
+            return *this;
         }
 
         uint128_t operator%(const uint128_t & rhs) const;
@@ -265,7 +268,8 @@ class uint128_t{
         uint128_t & operator%=(const uint128_t & rhs);
 
         template <typename T> uint128_t & operator%=(const T & rhs){
-            return *this = *this % uint128_t(rhs);
+            *this = *this % uint128_t(rhs);
+            return *this;
         }
 
         // Increment Operator

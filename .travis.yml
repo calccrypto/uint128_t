@@ -1,22 +1,39 @@
 language: cpp
 
+# from <http://stackoverflow.com/questions/22111549/travis-ci-with-clang-3-4-and-c11>
+
 compiler:
-  - g++
+  - clang
+  - gcc
+
+before_install:
+  - if [ "$CXX" == "g++" ]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
+
+  - if [ "$CXX" == "clang++" ]; then sudo add-apt-repository -y ppa:h-rayflood/llvm; fi
+
+  - sudo apt-get update -qq
 
 install:
-  # have newer versions of g++ available
-  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-6; fi
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-6"; fi
 
-  # install packages
-  - sudo apt-get update -y
-  - sudo apt-get install -y g++-4.9
+  - if [ "$CXX" == "clang++" ]; then sudo apt-get install --allow-unauthenticated -qq clang-3.4; fi
+  - if [ "$CXX" == "clang++" ]; then export CXX="clang++-3.4"; fi
 
-  # force g++ to be g++-4.9
-  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 10
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 10
+  - sudo apt-get install -qq git cmake
 
 before_script:
+  - cd tests
+
+  # not much better than git submodules, but I don't need/want the repo in my repo
+  - git clone https://github.com/google/googletest.git
+  - cd googletest
+  - git reset --hard d62d6c6556d96dda924382547c54a4b3afedb22c
+  - cmake CMakeLists.txt
+  - make
+
+  - cd ..
   - make
 
 script:
-  - make test
+  - make run

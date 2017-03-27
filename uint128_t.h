@@ -305,10 +305,6 @@ namespace std {  // This is probably not a good idea
     template <> struct is_unsigned   <uint128_t> : std::true_type {};
 };
 
-// Useful values
-extern const uint128_t uint128_0;
-extern const uint128_t uint128_1;
-
 // lhs type T as first arguemnt
 // If the output is not a bool, casts to type T
 

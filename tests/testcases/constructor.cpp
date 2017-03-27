@@ -30,14 +30,13 @@ TEST(Constructor, one){
 }
 
 TEST(Constructor, two){
-    EXPECT_EQ(uint128_t(true,  true).upper(),   true);
-    EXPECT_EQ(uint128_t(true,  true).lower(),   true);
-    EXPECT_EQ(uint128_t(true,  false).upper(),  true);
-    EXPECT_EQ(uint128_t(true,  false).lower(), false);
-    EXPECT_EQ(uint128_t(false, false).upper(), false);
-    EXPECT_EQ(uint128_t(false, false).lower(), false);
-    EXPECT_EQ(uint128_t(false, true).upper(),  false);
-    EXPECT_EQ(uint128_t(false, true).lower(),   true);
+    for(uint8_t hi = 0; hi < 2; hi++){
+        for(uint8_t lo = 0; lo < 2; lo++){
+            const uint128_t val(hi, lo);
+            EXPECT_EQ(val.upper(), hi);
+            EXPECT_EQ(val.lower(), lo);
+        }
+    }
 
     EXPECT_EQ(uint128_t((uint8_t)  0x01ULL,               (uint8_t)  0x01ULL).upper(),               (uint8_t)  0x01ULL);
     EXPECT_EQ(uint128_t((uint16_t) 0x0123ULL,             (uint16_t) 0x0123ULL).upper(),             (uint16_t) 0x0123ULL);

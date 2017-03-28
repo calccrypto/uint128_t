@@ -23,16 +23,15 @@ install:
   - sudo apt-get install -qq git cmake
 
 before_script:
-  - cd tests
-
-  # not much better than git submodules, but I don't need/want the repo in my repo
+  # not much better than git submodules, but there was never a need/want for the repo in this repo
+  - cd ..
   - git clone https://github.com/google/googletest.git
   - cd googletest
   - git reset --hard d62d6c6556d96dda924382547c54a4b3afedb22c
   - cmake CMakeLists.txt
   - make
 
-  - cd ..
+  - cd uint128_t/tests
   - make
 
 script:

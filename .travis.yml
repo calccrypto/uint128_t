@@ -31,7 +31,7 @@ before_script:
   - cmake CMakeLists.txt
   - make
 
-  - cd uint128_t/tests
+  - cd ../uint128_t/tests
   - make
 
 script:

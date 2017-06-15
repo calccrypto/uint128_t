@@ -238,11 +238,11 @@ uint128_t uint128_t::operator*(const uint128_t & rhs) const{
 
     // move carry to next digit
     third32  += fourth32 >> 32;
-	second32 += third32  >> 32;
-	first32  += second32 >> 32;
+    second32 += third32  >> 32;
+    first32  += second32 >> 32;
 
     // remove carry from current digit
-	fourth32 &= 0xffffffff;
+    fourth32 &= 0xffffffff;
     third32  &= 0xffffffff;
     second32 &= 0xffffffff;
     first32  &= 0xffffffff;

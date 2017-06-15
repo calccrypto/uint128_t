@@ -248,7 +248,7 @@ class uint128_t{
         std::pair <uint128_t, uint128_t> divmod(const uint128_t & lhs, const uint128_t & rhs) const;
 
     public:
-		uint128_t operator/(const uint128_t & rhs) const;
+        uint128_t operator/(const uint128_t & rhs) const;
 
         template <typename T> uint128_t operator/(const T & rhs) const{
             return *this / uint128_t(rhs);

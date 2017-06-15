@@ -264,7 +264,7 @@ class uint128_t{
         uint128_t operator%(const uint128_t & rhs) const;
 
         template <typename T> uint128_t operator%(const T & rhs) const{
-            return *this - (rhs * (*this / rhs));
+            return *this % uint128_t(rhs);
         }
 
         uint128_t & operator%=(const uint128_t & rhs);

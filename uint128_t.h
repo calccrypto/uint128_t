@@ -37,6 +37,7 @@ to do a general rewrite of this class.
 #include <cstdint>
 #include <iostream>
 #include <stdexcept>
+#include <type_traits>
 #include <utility>
 
 class uint128_t{

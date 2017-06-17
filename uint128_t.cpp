@@ -20,13 +20,13 @@ uint128_t::uint128_t(uint128_t && rhs)
     }
 }
 
-uint128_t uint128_t::operator=(const uint128_t & rhs){
+uint128_t & uint128_t::operator=(const uint128_t & rhs){
     UPPER = rhs.UPPER;
     LOWER = rhs.LOWER;
     return *this;
 }
 
-uint128_t uint128_t::operator=(uint128_t && rhs){
+uint128_t & uint128_t::operator=(uint128_t && rhs){
     if (this != &rhs){
         UPPER = std::move(rhs.UPPER);
         LOWER = std::move(rhs.LOWER);

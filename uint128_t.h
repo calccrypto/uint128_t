@@ -37,9 +37,12 @@ to do a general rewrite of this class.
 #include <cstdint>
 #include <iostream>
 #include <stdexcept>
+// Visual Studio
+#ifdef _MSC_VER
+#include <string>
+#endif
 #include <type_traits>
 #include <utility>
-#include <string>
 
 class uint128_t{
     private:

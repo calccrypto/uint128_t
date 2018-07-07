@@ -37,10 +37,7 @@ to do a general rewrite of this class.
 #include <cstdint>
 #include <ostream>
 #include <stdexcept>
-// Visual Studio
-#ifdef _MSC_VER
 #include <string>
-#endif
 #include <type_traits>
 #include <utility>
 

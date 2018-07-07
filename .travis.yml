@@ -1,28 +1,109 @@
 language: cpp
 
-# from <http://stackoverflow.com/questions/22111549/travis-ci-with-clang-3-4-and-c11>
+sudo: false
 
-compiler:
-  - clang
-  - gcc
+os: linux
+dist: trusty
+
+matrix:
+    include:
+        - addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                packages:
+                    - g++-4.9
+          env:
+              - CXX_COMPILER="g++-4.9"
+        - addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                packages:
+                    - g++-5
+          env:
+              - CXX_COMPILER="g++-5"
+        - addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                packages:
+                    - g++-6
+          env:
+              - CXX_COMPILER="g++-6"
+        - addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                packages:
+                    - g++-7
+          env:
+              - CXX_COMPILER="g++-7"
+        - addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                    - llvm-toolchain-precise-3.6
+                packages:
+                    - libstdc++-4.9-dev
+                    - clang-3.6
+          env:
+              - CXX_COMPILER="clang++-3.6"
+        - addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                    - llvm-toolchain-precise-3.7
+                packages:
+                    - libstdc++-4.9-dev
+                    - clang-3.7
+          env:
+              - CXX_COMPILER="clang++-3.7"
+        - addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                    - llvm-toolchain-precise-3.8
+                packages:
+                    - libstdc++-4.9-dev
+                    - clang-3.8
+          env:
+              - CXX_COMPILER="clang++-3.8"
+        - addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                    - llvm-toolchain-trusty-3.9
+                packages:
+                    - libstdc++-7-dev
+                    - clang-3.9
+          env:
+              - CXX_COMPILER="clang++-3.9"
+        - addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                    - llvm-toolchain-trusty-4.0
+                packages:
+                    - libstdc++-7-dev
+                    - clang-4.0
+          env:
+              - CXX_COMPILER="clang++-4.0"
+        - addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                    - llvm-toolchain-trusty-5.0
+                packages:
+                    - libstdc++-7-dev
+                    - clang-5.0
+          env:
+              - CXX_COMPILER="clang++-5.0"
 
 before_install:
-  - if [ "$CXX" == "g++" ]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
-
-  - if [ "$CXX" == "clang++" ]; then sudo add-apt-repository -y ppa:h-rayflood/llvm; fi
-
-  - sudo apt-get update -qq
+    - export CXX="${CXX_COMPILER}"
 
 install:
-  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-6; fi
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-6"; fi
-
-  - if [ "$CXX" == "clang++" ]; then sudo apt-get install --allow-unauthenticated -qq clang-3.4; fi
-  - if [ "$CXX" == "clang++" ]; then export CXX="clang++-3.4"; fi
-
-  - sudo apt-get install -qq git cmake
-
-before_script:
   # not much better than git submodules, but there was never a need/want for the repo in this repo
   - cd ..
   - git clone https://github.com/google/googletest.git
@@ -30,9 +111,8 @@ before_script:
   - git reset --hard d62d6c6556d96dda924382547c54a4b3afedb22c
   - cmake CMakeLists.txt
   - make
-
   - cd ../uint128_t/tests
-  - make
 
 script:
+  - make -j $(nproc --all)
   - make run

@@ -1,5 +1,5 @@
 CXX?=g++
-CXXFLAGS=-std=c++11 -Wall -g -I../../googletest/googletest/include -I..
+CXXFLAGS=-std=c++14 -Wall -g -I../../googletest/googletest/include -I..
 LDFLAGS=-L../../googletest/googlemock/gtest -lgtest -lpthread
 TARGET=test
 

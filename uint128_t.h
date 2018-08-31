@@ -56,7 +56,7 @@ namespace std {  // This is probably not a good idea
     template <> struct is_arithmetic <uint128_t> : std::true_type {};
     template <> struct is_integral   <uint128_t> : std::true_type {};
     template <> struct is_unsigned   <uint128_t> : std::true_type {};
-};
+}
 
 class uint128_t{
     private:

@@ -8,6 +8,8 @@ Please see LICENSE file for license.
 
 [![Build Status](https://travis-ci.org/calccrypto/uint128_t.svg?branch=master)](https://travis-ci.org/calccrypto/uint128_t)
 
+A C++ compiler supporting at least C++11 is required.
+
 With much help from Auston Sterling
 
 Thanks to Stefan Deigmüller for finding

@@ -15,6 +15,7 @@ matrix:
                     - g++-4.9
           env:
               - CXX_COMPILER="g++-4.9"
+              - STANDARD="c++11"
         - addons:
             apt:
                 sources:
@@ -23,6 +24,7 @@ matrix:
                     - g++-5
           env:
               - CXX_COMPILER="g++-5"
+              - STANDARD="c++11"
         - addons:
             apt:
                 sources:
@@ -31,6 +33,7 @@ matrix:
                     - g++-6
           env:
               - CXX_COMPILER="g++-6"
+              - STANDARD="c++11"
         - addons:
             apt:
                 sources:
@@ -39,6 +42,7 @@ matrix:
                     - g++-7
           env:
               - CXX_COMPILER="g++-7"
+              - STANDARD="c++11"
         - addons:
             apt:
                 sources:
@@ -49,6 +53,7 @@ matrix:
                     - clang-3.6
           env:
               - CXX_COMPILER="clang++-3.6"
+              - STANDARD="c++11"
         - addons:
             apt:
                 sources:
@@ -59,6 +64,7 @@ matrix:
                     - clang-3.7
           env:
               - CXX_COMPILER="clang++-3.7"
+              - STANDARD="c++11"
         - addons:
             apt:
                 sources:
@@ -69,6 +75,7 @@ matrix:
                     - clang-3.8
           env:
               - CXX_COMPILER="clang++-3.8"
+              - STANDARD="c++11"
         - addons:
             apt:
                 sources:
@@ -79,6 +86,7 @@ matrix:
                     - clang-3.9
           env:
               - CXX_COMPILER="clang++-3.9"
+              - STANDARD="c++11"
         - addons:
             apt:
                 sources:
@@ -89,6 +97,7 @@ matrix:
                     - clang-4.0
           env:
               - CXX_COMPILER="clang++-4.0"
+              - STANDARD="c++11"
         - addons:
             apt:
                 sources:
@@ -99,6 +108,109 @@ matrix:
                     - clang-5.0
           env:
               - CXX_COMPILER="clang++-5.0"
+              - STANDARD="c++11"
+        - addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                packages:
+                    - g++-4.9
+          env:
+              - CXX_COMPILER="g++-4.9"
+              - STANDARD="c++14"
+        - addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                packages:
+                    - g++-5
+          env:
+              - CXX_COMPILER="g++-5"
+              - STANDARD="c++14"
+        - addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                packages:
+                    - g++-6
+          env:
+              - CXX_COMPILER="g++-6"
+              - STANDARD="c++14"
+        - addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                packages:
+                    - g++-7
+          env:
+              - CXX_COMPILER="g++-7"
+              - STANDARD="c++14"
+        - addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                    - llvm-toolchain-precise-3.6
+                packages:
+                    - libstdc++-4.9-dev
+                    - clang-3.6
+          env:
+              - CXX_COMPILER="clang++-3.6"
+              - STANDARD="c++14"
+        - addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                    - llvm-toolchain-precise-3.7
+                packages:
+                    - libstdc++-4.9-dev
+                    - clang-3.7
+          env:
+              - CXX_COMPILER="clang++-3.7"
+              - STANDARD="c++14"
+        - addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                    - llvm-toolchain-precise-3.8
+                packages:
+                    - libstdc++-4.9-dev
+                    - clang-3.8
+          env:
+              - CXX_COMPILER="clang++-3.8"
+              - STANDARD="c++14"
+        - addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                    - llvm-toolchain-trusty-3.9
+                packages:
+                    - libstdc++-7-dev
+                    - clang-3.9
+          env:
+              - CXX_COMPILER="clang++-3.9"
+              - STANDARD="c++14"
+        - addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                    - llvm-toolchain-trusty-4.0
+                packages:
+                    - libstdc++-7-dev
+                    - clang-4.0
+          env:
+              - CXX_COMPILER="clang++-4.0"
+              - STANDARD="c++14"
+        - addons:
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                    - llvm-toolchain-trusty-5.0
+                packages:
+                    - libstdc++-7-dev
+                    - clang-5.0
+          env:
+              - CXX_COMPILER="clang++-5.0"
+              - STANDARD="c++14"
 
 before_install:
     - export CXX="${CXX_COMPILER}"
@@ -110,7 +222,7 @@ install:
   - cd googletest
   - git reset --hard d62d6c6556d96dda924382547c54a4b3afedb22c
   - cmake CMakeLists.txt
-  - make
+  - make -j $(nproc --all)
   - cd ../uint128_t/tests
 
 script:

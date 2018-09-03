@@ -337,6 +337,7 @@ class uint128_t{
 // useful values
 extern const uint128_t uint128_0;
 extern const uint128_t uint128_1;
+extern const uint128_t uint128_max;
 
 // lhs type T as first arguemnt
 // If the output is not a bool, casts to type T

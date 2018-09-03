@@ -16,13 +16,19 @@ TEST(Comparison, greater_than_or_equals){
 #define unsigned_compare_gte(Z)                                         \
 do                                                                      \
 {                                                                       \
-    static_assert(std::is_signed <Z>::value, "Type must be signed");    \
+    static_assert(std::is_unsigned <Z>::value, "Type must be signed");  \
                                                                         \
-    const T small = std::numeric_limits <Z>::min();                     \
-    const T big   = std::numeric_limits <Z>::max();                     \
+    const Z small = std::numeric_limits <Z>::min();                     \
+    const Z big   = std::numeric_limits <Z>::max();                     \
                                                                         \
     const uint128_t int_small(small);                                   \
     const uint128_t int_big(big);                                       \
+                                                                        \
+    EXPECT_EQ(small >= int_small,  true);                               \
+    EXPECT_EQ(small >= int_big,   false);                               \
+                                                                        \
+    EXPECT_EQ(big >= int_small,    true);                               \
+    EXPECT_EQ(big >= int_big,      true);                               \
 }                                                                       \
 while (0)
 
@@ -31,22 +37,28 @@ do                                                                      \
 {                                                                       \
     static_assert(std::is_signed <Z>::value, "Type must be signed");    \
                                                                         \
-    const T small =  1;                                                 \
-    const T big = std::numeric_limits <Z>::max();                       \
+    const Z small = 1;                                                  \
+    const Z big = std::numeric_limits <Z>::max();                       \
                                                                         \
     const uint128_t int_small(small);                                   \
     const uint128_t int_big(big);                                       \
+                                                                        \
+    EXPECT_EQ(small >= int_small,  true);                               \
+    EXPECT_EQ(small >= int_big,   false);                               \
+                                                                        \
+    EXPECT_EQ(big >= int_small,    true);                               \
+    EXPECT_EQ(big >= int_big,      true);                               \
 }                                                                       \
 while (0)
 
-// TEST(External, greater_than_or_equals){
-    // unsigned_compare_gte(bool);
-    // unsigned_compare_gte(uint8_t);
-    // unsigned_compare_gte(uint16_t);
-    // unsigned_compare_gte(uint32_t);
-    // unsigned_compare_gte(uint64_t);
-    // signed_compare_gte(int8_t);
-    // signed_compare_gte(int16_t);
-    // signed_compare_gte(int32_t);
-    // signed_compare_gte(int64_t);
-// }
+TEST(External, greater_than_or_equals){
+    unsigned_compare_gte(bool);
+    unsigned_compare_gte(uint8_t);
+    unsigned_compare_gte(uint16_t);
+    unsigned_compare_gte(uint32_t);
+    unsigned_compare_gte(uint64_t);
+    signed_compare_gte(int8_t);
+    signed_compare_gte(int16_t);
+    signed_compare_gte(int32_t);
+    signed_compare_gte(int64_t);
+}

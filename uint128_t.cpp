@@ -1,8 +1,7 @@
-#include "uint128_t.h"
+#include "uint128_t.build"
 
 const uint128_t uint128_0(0);
 const uint128_t uint128_1(1);
-const uint128_t uint128_max((uint64_t) -1, (uint64_t) -1);
 
 uint128_t::uint128_t()
     : UPPER(0), LOWER(0)

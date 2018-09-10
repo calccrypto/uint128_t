@@ -277,12 +277,12 @@ std::pair <uint128_t, uint128_t> uint128_t::divmod(const uint128_t & lhs, const 
         qr.second <<= uint128_1;
 
         if ((lhs >> (x - 1U)) & 1){
-            qr.second++;
+            ++qr.second;
         }
 
         if (qr.second >= rhs){
             qr.second -= rhs;
-            qr.first++;
+            ++qr.first;
         }
     }
     return qr;

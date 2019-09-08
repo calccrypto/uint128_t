@@ -15,5 +15,54 @@
     #define _UINT128_T_EXPORT __attribute__((visibility("default")))
     #define _UINT128_T_IMPORT __attribute__((visibility("default")))
   #endif
+
+  // Multiply stuff. The algorithm is usually pretty efficient on its own, but we can do better.
+  // Notably this includes using target intrinsics and switching to ARM mode on Thumb-1 targets.
+
+  // Portable grade school long multiply
+  #define _UINT128_T_MULT_PORTABLE 0
+  // _umul128
+  #define _UINT128_T_MULT_MSVC 1
+  // __uint128_t
+  #define _UINT128_T_MULT_GCC 2
+
+  #ifndef _UINT128_T_MULT_TYPE
+    #if defined(_MSC_VER) && (defined(_M_IX64) || defined(_M_AMD64))
+      #define _UINT128_T_MULT_TYPE _UINT128_T_MULT_MSVC
+    // Clang defines __uint128_t on WASM and asm.js even though it has to use builtins for multiplication.
+    // As a result, the algorithm is slower than it would be if it was done manually.
+    #elif defined(__GNUC__) && defined(__SIZEOF_INT128__) && !defined(__wasm__) && !defined(__asmjs__)
+      #define _UINT128_T_MULT_TYPE _UINT128_T_MULT_GCC
+    #else
+      #define _UINT128_T_MULT_TYPE _UINT128_T_MULT_PORTABLE
+    #endif
+  #endif
+
+  // Some feature flags to optimize the manual algorithm.
+  #if defined(__GNUC__) && _UINT128_T_MULT_TYPE == _UINT128_T_MULT_PORTABLE
+    // GCC for x86 loves to use SSE2 in the multiply code, but it is inefficient because it uses shifts and shuffles which aren't 'free'
+    // like normal register swapping. Clang doesn't need this flag, as it never uses this.
+
+    #if !defined(__clang__) && defined(__SSE2__)
+      #define _UINT128_T_MULT_TARGET __attribute__((__target__("no-sse2")))
+
+    // In Thumb-1, the multiply algorithm is heavily crippled because the powerful UMULL, UMLAL, and UMAAL are inaccesible.
+    // Even if reading 32-bit instructions is slower, it is almost always faster to switch to ARM mode here.
+    // If you are compiling for the M profile and this is falsely being triggered, define _UINT128_T_FORCE_THUMB or use the
+    // correct -march flag.
+    //
+    // Note: Clang sometimes emits warnings like this:
+    //    '+soft-float-abi' is not a recognized feature for this target (ignoring feature)
+    // These can safely be ignored.
+
+    #elif defined(__thumb__) && !defined(__thumb2__) && defined(__ARM_ARCH_ISA_ARM) && !defined(_UINT128_T_FORCE_THUMB)
+      #define _UINT128_T_MULT_TARGET __attribute__((__target__("arm")))
+    #else
+      #define _UINT128_T_MULT_TARGET
+    #endif
+  #else
+    #define _UINT128_T_MULT_TARGET
+  #endif
+
 #endif
 

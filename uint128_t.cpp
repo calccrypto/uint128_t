@@ -250,53 +250,96 @@ uint128_t & uint128_t::operator-=(const uint128_t & rhs){
     return *this;
 }
 
-uint128_t uint128_t::operator*(const uint128_t & rhs) const{
-    // split values into 4 32-bit parts
-    uint64_t top[4] = {UPPER >> 32, UPPER & 0xffffffff, LOWER >> 32, LOWER & 0xffffffff};
-    uint64_t bottom[4] = {rhs.UPPER >> 32, rhs.UPPER & 0xffffffff, rhs.LOWER >> 32, rhs.LOWER & 0xffffffff};
-    uint64_t products[4][4];
+// Algorithm summary:
+//
+// First we do a 64-bit to 128-bit long multiply for the low bits, then we use a normal 64-bit
+// multiply on the high bits.
+// This allows us to take advantage of not only compiler intrinsics but native 64-bit arithmetic.
 
-    // multiply each component of the values
-    for(int y = 3; y > -1; y--){
-        for(int x = 3; x > -1; x--){
-            products[3 - x][y] = top[x] * bottom[y];
-        }
-    }
+// First we define the generic multlong64 methods. These will all do basically what _umul128 does.
 
-    // first row
-    uint64_t fourth32 = (products[0][3] & 0xffffffff);
-    uint64_t third32  = (products[0][2] & 0xffffffff) + (products[0][3] >> 32);
-    uint64_t second32 = (products[0][1] & 0xffffffff) + (products[0][2] >> 32);
-    uint64_t first32  = (products[0][0] & 0xffffffff) + (products[0][1] >> 32);
-
-    // second row
-    third32  += (products[1][3] & 0xffffffff);
-    second32 += (products[1][2] & 0xffffffff) + (products[1][3] >> 32);
-    first32  += (products[1][1] & 0xffffffff) + (products[1][2] >> 32);
-
-    // third row
-    second32 += (products[2][3] & 0xffffffff);
-    first32  += (products[2][2] & 0xffffffff) + (products[2][3] >> 32);
-
-    // fourth row
-    first32  += (products[3][3] & 0xffffffff);
-
-    // move carry to next digit
-    third32  += fourth32 >> 32;
-    second32 += third32  >> 32;
-    first32  += second32 >> 32;
-
-    // remove carry from current digit
-    fourth32 &= 0xffffffff;
-    third32  &= 0xffffffff;
-    second32 &= 0xffffffff;
-    first32  &= 0xffffffff;
-
-    // combine components
-    return uint128_t((first32 << 32) | second32, (third32 << 32) | fourth32);
+// MSVC _umul128
+#if _UINT128_T_MULT_TYPE == _UINT128_T_MULT_MSVC
+#include <intrin.h>
+_UINT128_T_MULT_TARGET uint64_t uint128_t::multlong64(uint64_t lhs, uint64_t rhs, uint64_t *high){
+    return _umul128(lhs, rhs, high);
 }
 
-uint128_t & uint128_t::operator*=(const uint128_t & rhs){
+// GCC __uint128_t
+#elif _UINT128_T_MULT_TYPE == _UINT128_T_MULT_GCC
+_UINT128_T_MULT_TARGET uint64_t uint128_t::multlong64(uint64_t lhs, uint64_t rhs, uint64_t *high){
+    __uint128_t product = static_cast<__uint128_t>(lhs) * static_cast<__uint128_t>(rhs);
+    *high = static_cast<uint64_t>(product >> 64);
+    return static_cast<uint64_t>(product & 0xFFFFFFFFFFFFFFFF);
+}
+
+// Portable version
+#else
+// The double cast helps MSVC
+_UINT128_T_MULT_TARGET static inline uint64_t lower32(uint64_t val){
+    return static_cast<uint64_t>(static_cast<uint32_t>(val));
+}
+_UINT128_T_MULT_TARGET static inline uint64_t upper32(uint64_t val){
+    return static_cast<uint64_t>(static_cast<uint32_t>(val >> 32));
+}
+
+_UINT128_T_MULT_TARGET uint64_t uint128_t::multlong64(uint64_t lhs, uint64_t rhs, uint64_t *high){
+    // This is a fast yet simple grade school 2x2 long multiply.
+    // The way we add the cross products avoids the need to track 64-bit carries due to the properties
+    // of multiplying by 11 (technically 0x100000001) capping the sums at 0xFFFFFFFFFFFFFFFF, and it
+    // tries to match the powerful ARMv6's UMAAL function which was explicitly designed for
+    // multiprecision multiplication:
+    //
+    //    void umaal(uint32_t &RdLo, uint32_t &RdHi, const uint32_t Rn, const uint32_t Rm){
+    //        uint64_t product = static_cast<uint64_t>(Rn) * static_cast<uint64_t>(Rm);
+    //        product += RdLo;
+    //        product += RdHi;
+    //        RdLo = static_cast<uint32_t>(product & 0xFFFFFFFF);
+    //        RdHi = static_cast<uint32_t>(product >> 32);
+    //    }
+    //
+    // This allows a 64-bit to 128-bit multiply to be calculated in 4 instructions, ~3 cycles each.
+    //
+    // It is still fast for other platforms, though.
+    //
+    // TODO: Use better variable names
+
+    // Calculate the cross products...
+    uint64_t lo_lo = lower32(lhs) * lower32(rhs);
+    uint64_t hi_lo = upper32(lhs) * lower32(rhs);
+    uint64_t lo_hi = lower32(lhs) * upper32(rhs);
+    uint64_t hi_hi = upper32(lhs) * upper32(rhs);
+
+    // then add them together.
+    uint64_t cross = upper32(lo_lo) + lower32(hi_lo) + lo_hi;
+    uint64_t top = upper32(hi_lo) + upper32(cross) + hi_hi;
+
+    // Done
+    *high = top;
+    return (cross << 32) | (lo_lo & 0xFFFFFFFF);
+}
+#endif
+
+// Now we do the full 128-bit multiply.
+//
+// This is based on the 64-bit multiply idiom on ARM, only for 128-bit integers instead of 64-bit.
+//
+//     @ {r0, r1} * {r2, r3} (little endian)
+//     umull   r12, lr, r2, r0    @ {r12, lr} = static_cast<uint64_t>(r2) * static_cast<uint64_t>(r0)
+//     mla     r4,  r2, r1, lr    @ r4 = r2 * r1 + lr;
+//     mla     r1,  r3, r0, r4    @ r1 = r3 * r0 + r4
+//     @ result is in {r12, r1}
+
+_UINT128_T_MULT_TARGET uint128_t uint128_t::operator*(const uint128_t & rhs) const{
+    uint64_t high;
+    uint64_t low = multlong64(LOWER, rhs.LOWER, &high);
+    uint128_t acc(high, low);
+    acc.UPPER += LOWER * rhs.UPPER;
+    acc.UPPER += UPPER * rhs.LOWER;
+    return acc;
+}
+
+_UINT128_T_MULT_TARGET uint128_t & uint128_t::operator*=(const uint128_t & rhs){
     *this = *this * rhs;
     return *this;
 }

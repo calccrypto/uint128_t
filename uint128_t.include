@@ -49,7 +49,7 @@ namespace std {  // This is probably not a good idea
     template <> struct is_arithmetic <uint128_t> : std::true_type {};
     template <> struct is_integral   <uint128_t> : std::true_type {};
     template <> struct is_unsigned   <uint128_t> : std::true_type {};
-};
+}
 
 class uint128_t{
     private:
@@ -66,7 +66,13 @@ class uint128_t{
         template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
         uint128_t(const T & rhs)
             : UPPER(0), LOWER(rhs)
-        {}
+        {
+            if (std::is_signed<T>::value) {
+                if (rhs < 0) {
+                    UPPER = -1;
+                }
+            }
+        }
 
         template <typename S, typename T, typename = typename std::enable_if <std::is_integral<S>::value && std::is_integral<T>::value, void>::type>
         uint128_t(const S & upper_rhs, const T & lower_rhs)
@@ -95,7 +101,7 @@ class uint128_t{
 
         // Bitwise Operators
         uint128_t operator&(const uint128_t & rhs) const;
-		
+
         void export_bits(std::vector<uint8_t> & ret) const;
 
         template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
@@ -245,9 +251,7 @@ class uint128_t{
 
         template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
         uint128_t & operator+=(const T & rhs){
-            UPPER = UPPER + ((LOWER + rhs) < LOWER);
-            LOWER = LOWER + rhs;
-            return *this;
+            return *this += uint128_t(rhs);
         }
 
         uint128_t operator-(const uint128_t & rhs) const;
@@ -261,8 +265,7 @@ class uint128_t{
 
         template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
         uint128_t & operator-=(const T & rhs){
-            *this = *this - rhs;
-            return *this;
+            return *this = *this - uint128_t(rhs);
         }
 
         uint128_t operator*(const uint128_t & rhs) const;
@@ -276,8 +279,7 @@ class uint128_t{
 
         template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
         uint128_t & operator*=(const T & rhs){
-            *this = *this * uint128_t(rhs);
-            return *this;
+            return *this = *this * uint128_t(rhs);
         }
 
     private:
@@ -299,8 +301,7 @@ class uint128_t{
 
         template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
         uint128_t & operator/=(const T & rhs){
-            *this = *this / uint128_t(rhs);
-            return *this;
+            return *this = *this / uint128_t(rhs);
         }
 
         uint128_t operator%(const uint128_t & rhs) const;
@@ -314,8 +315,7 @@ class uint128_t{
 
         template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
         uint128_t & operator%=(const T & rhs){
-            *this = *this % uint128_t(rhs);
-            return *this;
+            return *this = *this % uint128_t(rhs);
         }
 
         // Increment Operator

@@ -1,11 +1,9 @@
 language: cpp
 
-sudo: false
-
 os: linux
 dist: trusty
 
-matrix:
+jobs:
     include:
         - addons:
             apt:
@@ -221,9 +219,12 @@ install:
   - git clone https://github.com/google/googletest.git
   - cd googletest
   - git reset --hard d62d6c6556d96dda924382547c54a4b3afedb22c
-  - cmake CMakeLists.txt
+  - mkdir build
+  - cd build
+  - cmake .. -DCMAKE_INSTALL_PREFIX=install
   - make -j $(nproc --all)
-  - cd ../uint128_t/tests
+  - make -j install
+  - cd ../../uint128_t/tests
 
 script:
   - make -j $(nproc --all)

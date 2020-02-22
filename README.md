@@ -25,7 +25,7 @@ done in `uint256_t`, which I copied into here.
 This is simple implementation of an unsigned 128 bit
 integer type in C++. It's meant to be used like a standard
 `uintX_t`, except with a larger bit size than those provided
-by C/C++. 
+by C/C++.
 
 ### In Code
 All that needs to be done in code is `#include "uint128_t.h"`
@@ -41,9 +41,6 @@ int main() {
     return 0;
 }
 ```
-
-Be careful when initializing a `uint128_t` value. -1 does not
-create the value 2<sup>128</sup> - 1. Rather, it uses the built-in max unsigned value (probably 2<sup>64</sup> - 1).
 
 ### Compilation
 A C++ compiler supporting at least C++11 is required.

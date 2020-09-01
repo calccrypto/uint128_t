@@ -9,7 +9,7 @@ TEST(Constructor, standard){
     EXPECT_EQ(uint128_t(), 0);
     EXPECT_EQ(value, original);
     EXPECT_EQ(uint128_t(std::move(value)), original);
-    EXPECT_EQ(value, 0);
+    EXPECT_EQ(value, 0x0123456789abcdefULL);
 }
 
 TEST(Constructor, one){

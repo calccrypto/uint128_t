@@ -3,23 +3,6 @@
 const uint128_t uint128_0(0);
 const uint128_t uint128_1(1);
 
-uint128_t::uint128_t()
-    : UPPER(0), LOWER(0)
-{}
-
-uint128_t::uint128_t(const uint128_t & rhs)
-    : UPPER(rhs.UPPER), LOWER(rhs.LOWER)
-{}
-
-uint128_t::uint128_t(uint128_t && rhs)
-    : UPPER(std::move(rhs.UPPER)), LOWER(std::move(rhs.LOWER))
-{
-    if (this != &rhs){
-        rhs.UPPER = 0;
-        rhs.LOWER = 0;
-    }
-}
-
 uint128_t::uint128_t(std::string & s) {
     init(s.c_str());
 }
@@ -63,22 +46,6 @@ uint8_t uint128_t::HexToInt(const char *s) const {
         ret = uint8_t(*s - 'A' + 10);
     }
     return ret;
-}
-
-uint128_t & uint128_t::operator=(const uint128_t & rhs){
-    UPPER = rhs.UPPER;
-    LOWER = rhs.LOWER;
-    return *this;
-}
-
-uint128_t & uint128_t::operator=(uint128_t && rhs){
-    if (this != &rhs){
-        UPPER = std::move(rhs.UPPER);
-        LOWER = std::move(rhs.LOWER);
-        rhs.UPPER = 0;
-        rhs.LOWER = 0;
-    }
-    return *this;
 }
 
 uint128_t::operator bool() const{

@@ -105,6 +105,13 @@ class uint128_t{
         template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
         uint128_t & operator=(const T & rhs){
             UPPER = 0;
+
+            if (std::is_signed<T>::value) {
+                if (rhs < 0) {
+                    UPPER = -1;
+                }
+            }
+
             LOWER = rhs;
             return *this;
         }

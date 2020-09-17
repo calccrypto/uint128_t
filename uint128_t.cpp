@@ -12,6 +12,25 @@ uint128_t::uint128_t(const char *s) {
     init(s);
 }
 
+void uint128_t::init(const char *s){
+    if (s == NULL || s[0] == 0){
+        LOWER = UPPER = 0;
+        return;
+    }
+
+    while (*s == ' ') ++s;
+
+    if (std::memcmp(s, "0x", 2) == 0){
+        _init_hex(&s[2]);
+    }
+    else if (std::memcmp(s, "0o", 2) == 0){
+        _init_oct(&s[2]);
+    }
+    else{
+        _init_dec(s);
+    }
+}
+
 void uint128_t::_init_hex(const char *s) {
     // 2**128 = 0x100000000000000000000000000000000.
     LOWER = UPPER = 0;
@@ -67,25 +86,6 @@ void uint128_t::_init_oct(const char *s){
     for (size_t i = 0; '0' <= *s && *s <= '7' && i < 43; ++s, ++i){
         *this *= 8;
         *this += *s - '0';
-    }
-}
-
-void uint128_t::init(const char *s){
-    if (s == NULL || s[0] == 0){
-        LOWER = UPPER = 0;
-        return;
-    }
-
-    while (*s == ' ') ++s;
-
-    if (std::memcmp(s, "0x", 2) == 0){
-        _init_hex(&s[2]);
-    }
-    else if (std::memcmp(s, "0o", 2) == 0){
-        _init_oct(&s[2]);
-    }
-    else{
-        _init_dec(s);
     }
 }
 

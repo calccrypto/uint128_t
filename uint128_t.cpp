@@ -13,7 +13,7 @@ uint128_t::uint128_t(const char *s) {
 }
 
 void uint128_t::_init_hex(const char *s) {
-    // 2**128 = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF.
+    // 2**128 = 0x100000000000000000000000000000000.
     LOWER = UPPER = 0;
     size_t i;
     for (i = 0; *s && i < 16; ++s, ++i){

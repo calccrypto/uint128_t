@@ -14,17 +14,13 @@
     defined(__ARMEL__) ||                                         \
     defined(__THUMBEL__) ||                                       \
     defined(__AARCH64EL__) ||                                     \
-    defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__)
-#ifndef __LITTLE_ENDIAN__
-#define __LITTLE_ENDIAN__
-#endif
-#else
-#ifdef _WIN32
+    defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__) || \
+    defined(_WIN32) || defined(__i386__) || defined(__x86_64__) || \
+    defined(_X86_) || defined(_IA64_)
 #ifndef __LITTLE_ENDIAN__
 #define __LITTLE_ENDIAN__
 #endif
 #else
 #error "I don't know what architecture this is!"
-#endif
 #endif
 #endif

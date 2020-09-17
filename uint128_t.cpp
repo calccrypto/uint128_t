@@ -34,7 +34,7 @@ void uint128_t::init(const char *s) {
 void uint128_t::_init_hex(const char *s) {
     // 2**128 = 0x100000000000000000000000000000000.
     LOWER = UPPER = 0;
-    size_t i;
+    int i;
     for (i = 0; *s && i < 16; ++s, ++i){
         if ('0' <= *s && *s <= '9'){
             LOWER *= 16;
@@ -74,7 +74,7 @@ void uint128_t::_init_hex(const char *s) {
 void uint128_t::_init_dec(const char *s){
     // 2**128 = 340282366920938463463374607431768211456.
     LOWER = UPPER = 0;
-    for (size_t i = 0; '0' <= *s && *s <= '9' && i < 39; ++s, ++i){
+    for (int i = 0; '0' <= *s && *s <= '9' && i < 39; ++s, ++i){
         *this *= 10;
         *this += *s - '0';
     }
@@ -83,7 +83,7 @@ void uint128_t::_init_dec(const char *s){
 void uint128_t::_init_oct(const char *s){
     // 2**128 = 0o4000000000000000000000000000000000000000000.
     LOWER = UPPER = 0;
-    for (size_t i = 0; '0' <= *s && *s <= '7' && i < 43; ++s, ++i){
+    for (int i = 0; '0' <= *s && *s <= '7' && i < 43; ++s, ++i){
         *this *= 8;
         *this += *s - '0';
     }

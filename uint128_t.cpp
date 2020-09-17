@@ -80,11 +80,9 @@ void uint128_t::init(const char *s){
 
     if (std::memcmp(s, "0x", 2) == 0){
         _init_hex(&s[2]);
-        return;
     }
     else if (std::memcmp(s, "0o", 2) == 0){
         _init_oct(&s[2]);
-        return;
     }
     else{
         _init_dec(s);

@@ -19,6 +19,12 @@
 #define __LITTLE_ENDIAN__
 #endif
 #else
+#ifdef _WIN32
+#ifndef __LITTLE_ENDIAN__
+#define __LITTLE_ENDIAN__
+#endif
+#else
 #error "I don't know what architecture this is!"
+#endif
 #endif
 #endif

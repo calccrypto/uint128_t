@@ -12,7 +12,7 @@ uint128_t::uint128_t(const char *s) {
     init(s);
 }
 
-void uint128_t::init(const char *s){
+void uint128_t::init(const char *s) {
     if (s == NULL || s[0] == 0){
         LOWER = UPPER = 0;
         return;
@@ -90,7 +90,7 @@ void uint128_t::_init_oct(const char *s){
 }
 
 uint128_t::operator bool() const{
-    return (bool) (UPPER || LOWER);
+    return (bool) (UPPER | LOWER);
 }
 
 uint128_t::operator uint8_t() const{

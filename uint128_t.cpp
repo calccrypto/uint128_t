@@ -453,7 +453,7 @@ std::string uint128_t::str(uint8_t base, const unsigned int & len) const{
 }
 
 uint128_t operator<<(const bool & lhs, const uint128_t & rhs){
-    return uint128_t(lhs) << rhs;
+    return uint128_t((uint8_t) lhs) << rhs;
 }
 
 uint128_t operator<<(const uint8_t & lhs, const uint128_t & rhs){
@@ -489,7 +489,7 @@ uint128_t operator<<(const int64_t & lhs, const uint128_t & rhs){
 }
 
 uint128_t operator>>(const bool & lhs, const uint128_t & rhs){
-    return uint128_t(lhs) >> rhs;
+    return uint128_t((uint8_t) lhs) >> rhs;
 }
 
 uint128_t operator>>(const uint8_t & lhs, const uint128_t & rhs){

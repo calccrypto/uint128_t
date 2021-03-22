@@ -12,6 +12,10 @@ uint128_t::uint128_t(const char *s) {
     init(s);
 }
 
+uint128_t::uint128_t(const bool & b)
+    : uint128_t((uint8_t) b)
+{}
+
 void uint128_t::init(const char *s) {
     if (s == NULL || s[0] == 0){
         LOWER = UPPER = 0;
@@ -87,6 +91,12 @@ void uint128_t::_init_oct(const char *s){
         *this *= 8;
         *this += *s - '0';
     }
+}
+
+uint128_t & uint128_t::operator=(const bool & rhs) {
+    UPPER = 0;
+    LOWER = rhs;
+    return *this;
 }
 
 uint128_t::operator bool() const{
@@ -453,7 +463,7 @@ std::string uint128_t::str(uint8_t base, const unsigned int & len) const{
 }
 
 uint128_t operator<<(const bool & lhs, const uint128_t & rhs){
-    return uint128_t((uint8_t) lhs) << rhs;
+    return uint128_t(lhs) << rhs;
 }
 
 uint128_t operator<<(const uint8_t & lhs, const uint128_t & rhs){
@@ -489,7 +499,7 @@ uint128_t operator<<(const int64_t & lhs, const uint128_t & rhs){
 }
 
 uint128_t operator>>(const bool & lhs, const uint128_t & rhs){
-    return uint128_t((uint8_t) lhs) >> rhs;
+    return uint128_t(lhs) >> rhs;
 }
 
 uint128_t operator>>(const uint8_t & lhs, const uint128_t & rhs){

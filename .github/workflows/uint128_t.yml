@@ -1,0 +1,33 @@
+name: uint128_t
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    strategy:
+      matrix:
+        standard: ["c++11", "c++14"]
+
+    env:
+        GTEST_COLOR: 1
+        STANDARD: "${{matrix.standard}}"
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: GoogleTest
+      run: tests/install_gtest.sh
+
+    - name: Build Tests
+      run: make -C tests
+
+    - name: Run Tests
+      run: tests/test

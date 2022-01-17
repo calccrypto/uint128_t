@@ -6,7 +6,7 @@ Copyright (c) 2013 - 2018 Jason Lee @ calccrypto at gmail.com
 
 Please see LICENSE file for license.
 
-[![Build Status](https://travis-ci.org/calccrypto/uint128_t.svg?branch=master)](https://travis-ci.org/calccrypto/uint128_t)
+[![uint128_t](https://github.com/calccrypto/uint128_t/actions/workflows/uint128_t.yml/badge.svg)](https://github.com/calccrypto/uint128_t/actions/workflows/uint128_t.yml)
 
 ## Acknowledgements
 With much help from Auston Sterling

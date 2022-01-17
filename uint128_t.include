@@ -67,8 +67,12 @@ class uint128_t{
         uint128_t() = default;
         uint128_t(const uint128_t & rhs) = default;
         uint128_t(uint128_t && rhs) = default;
-        uint128_t(std::string & s);
-        uint128_t(const char *s);
+
+        // do not use prefixes (0x, 0b, etc.)
+        // if the input string is too long, only right most characters are read
+        uint128_t(const std::string & s, uint8_t base);
+        uint128_t(const char *s, std::size_t len, uint8_t base);
+
         uint128_t(const bool & b);
 
         template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
@@ -311,11 +315,14 @@ class uint128_t{
 
     private:
         std::pair <uint128_t, uint128_t> divmod(const uint128_t & lhs, const uint128_t & rhs) const;
-        void init(const char * s);
         void ConvertToVector(std::vector<uint8_t> & current, const uint64_t & val) const;
-        void _init_hex(const char *s);
-        void _init_dec(const char *s);
-        void _init_oct(const char *s);
+        // do not use prefixes (0x, 0b, etc.)
+        // if the input string is too long, only right most characters are read
+        void init(const char * s, std::size_t len, uint8_t base);
+        void _init_hex(const char *s, std::size_t len);
+        void _init_dec(const char *s, std::size_t len);
+        void _init_oct(const char *s, std::size_t len);
+        void _init_bin(const char *s, std::size_t len);
 
     public:
         uint128_t operator/(const uint128_t & rhs) const;

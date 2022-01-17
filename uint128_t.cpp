@@ -1,95 +1,141 @@
 #include "uint128_t.build"
-#include <cstring>
+
+#include <algorithm>
+#include <cctype>
+#include <sstream>
 
 const uint128_t uint128_0(0);
 const uint128_t uint128_1(1);
 
-uint128_t::uint128_t(std::string & s) {
-    init(s.c_str());
+uint128_t::uint128_t(const std::string & s, uint8_t base) {
+    init(s.c_str(), s.size(), base);
 }
 
-uint128_t::uint128_t(const char *s) {
-    init(s);
+uint128_t::uint128_t(const char *s, const std::size_t len, uint8_t base) {
+    init(s, len, base);
 }
 
 uint128_t::uint128_t(const bool & b)
     : uint128_t((uint8_t) b)
 {}
 
-void uint128_t::init(const char *s) {
-    if (s == NULL || s[0] == 0){
+void uint128_t::init(const char *s, std::size_t len, uint8_t base) {
+    if ((s == NULL) || !len || (s[0] == '\x00')){
         LOWER = UPPER = 0;
         return;
     }
 
-    while (*s == ' ') ++s;
+    while (*s && len && std::isspace(*s)) {
+        ++s;
+        len--;
+    }
 
-    if (std::memcmp(s, "0x", 2) == 0){
-        _init_hex(&s[2]);
-    }
-    else if (std::memcmp(s, "0o", 2) == 0){
-        _init_oct(&s[2]);
-    }
-    else{
-        _init_dec(s);
+    // no prefixes
+    switch (base) {
+        case 16:
+            _init_hex(s, len);
+            break;
+        case 10:
+            _init_dec(s, len);
+            break;
+        case 8:
+            _init_oct(s, len);
+            break;
+        case 2:
+            _init_bin(s, len);
+            break;
+        default:
+            // should probably throw error here
+            break;
     }
 }
 
-void uint128_t::_init_hex(const char *s) {
+void uint128_t::_init_hex(const char *s, std::size_t len) {
     // 2**128 = 0x100000000000000000000000000000000.
+    static const std::size_t MAX_LEN = 32;
+
     LOWER = UPPER = 0;
-    int i;
-    for (i = 0; *s && i < 16; ++s, ++i){
-        if ('0' <= *s && *s <= '9'){
-            LOWER *= 16;
-            LOWER += *s - '0';
-        }
-        else if ('A' <= *s && *s <= 'F'){
-            LOWER *= 16;
-            LOWER += *s + (10 - 'A');
-        }
-        else if ('a' <= *s && *s <= 'f'){
-            LOWER *= 16;
-            LOWER += *s + (10 - 'a');
-        }
-        else{
-            return;
-        }
+    if (!s || !len) {
+        return;
     }
-    for (; *s && i < 32; ++s, ++i){
-        if ('0' <= *s && *s <= '9'){
-            *this *= 16;
-            *this += *s - '0';
-        }
-        else if ('A' <= *s && *s <= 'F'){
-            *this *= 16;
-            *this += *s + (10 - 'A');
-        }
-        else if ('a' <= *s && *s <= 'f'){
-            *this *= 16;
-            *this += *s + (10 - 'a');
-        }
-        else{
-            return;
-        }
-    }
+
+    const std::size_t max_len = std::min(len, MAX_LEN);
+    const std::size_t starting_index = (MAX_LEN < len)?(len - MAX_LEN):0;
+    const std::size_t double_lower = sizeof(LOWER) * 2;
+    const std::size_t lower_len = (max_len >= double_lower)?double_lower:max_len;
+    const std::size_t upper_len = (max_len >= double_lower)?(max_len - double_lower):0;
+
+    std::stringstream lower_s, upper_s;
+    upper_s << std::hex << std::string(s + starting_index, upper_len);
+    lower_s << std::hex << std::string(s + starting_index + upper_len, lower_len);
+
+    // should check for errors
+    upper_s >> UPPER;
+    lower_s >> LOWER;
 }
 
-void uint128_t::_init_dec(const char *s){
+void uint128_t::_init_dec(const char *s, std::size_t len){
     // 2**128 = 340282366920938463463374607431768211456.
+    static const std::size_t MAX_LEN = 39;
+
     LOWER = UPPER = 0;
-    for (int i = 0; '0' <= *s && *s <= '9' && i < 39; ++s, ++i){
+    if (!s || !len) {
+        return;
+    }
+
+    const std::size_t max_len = std::min(len, MAX_LEN);
+    const std::size_t starting_index = (MAX_LEN < len)?(len - MAX_LEN):0;
+    s += starting_index;
+
+    for (std::size_t i = 0; *s && ('0' <= *s) && (*s <= '9') && (i < max_len); ++s, ++i){
         *this *= 10;
         *this += *s - '0';
     }
 }
 
-void uint128_t::_init_oct(const char *s){
+void uint128_t::_init_oct(const char *s, std::size_t len){
     // 2**128 = 0o4000000000000000000000000000000000000000000.
+    static const std::size_t MAX_LEN = 43;
+
     LOWER = UPPER = 0;
-    for (int i = 0; '0' <= *s && *s <= '7' && i < 43; ++s, ++i){
+    if (!s || !len) {
+        return;
+    }
+
+    const std::size_t max_len = std::min(len, MAX_LEN);
+    const std::size_t starting_index = (MAX_LEN < len)?(len - MAX_LEN):0;
+    s += starting_index;
+
+    for (std::size_t i = 0; *s && ('0' <= *s) && (*s <= '7') && (i < max_len); ++s, ++i){
         *this *= 8;
         *this += *s - '0';
+    }
+}
+
+void uint128_t::_init_bin(const char *s, std::size_t len){
+    // 2**128 = 0x100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000.
+    static const std::size_t MAX_LEN = 128;
+
+    LOWER = UPPER = 0;
+    if (!s || !len) {
+        return;
+    }
+
+    const std::size_t max_len = std::min(len, MAX_LEN);
+    const std::size_t starting_index = (MAX_LEN < len)?(len - MAX_LEN):0;
+    const std::size_t eight_lower = sizeof(LOWER) * 8;
+    const std::size_t lower_len = (max_len >= eight_lower)?eight_lower:max_len;
+    const std::size_t upper_len = (max_len >= eight_lower)?(max_len - eight_lower):0;
+    s += starting_index;
+
+    for (std::size_t i = 0; *s && ('0' <= *s) && (*s <= '1') && (i < upper_len); ++s, ++i){
+        UPPER <<= 1;
+        UPPER |= *s - '0';
+    }
+
+    for (std::size_t i = 0; *s && ('0' <= *s) && (*s <= '1') && (i < lower_len); ++s, ++i){
+        LOWER <<= 1;
+        LOWER |= *s - '0';
     }
 }
 

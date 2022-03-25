@@ -1,6 +1,8 @@
 #ifndef _UINT128_T_CONFIG_
   #define _UINT128_T_CONFIG_
   #if defined(_MSC_VER)
+    // fix for static lib
+    #undef _DLL
     #if defined(_DLL)
       #define _UINT128_T_EXPORT __declspec(dllexport)
       #define _UINT128_T_IMPORT __declspec(dllimport)

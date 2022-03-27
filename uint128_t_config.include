@@ -1,7 +1,7 @@
 #ifndef _UINT128_T_CONFIG_
   #define _UINT128_T_CONFIG_
   #if defined(_MSC_VER)
-    #if defined(_DLL) && NOT defined(_UINT128_T_STATIC)
+    #if defined(_DLL) && !defined(_UINT128_T_STATIC)
       #define _UINT128_T_EXPORT __declspec(dllexport)
       #define _UINT128_T_IMPORT __declspec(dllimport)
     #else

@@ -4,9 +4,6 @@
 #include <cctype>
 #include <sstream>
 
-const uint128_t uint128_0(0);
-const uint128_t uint128_1(1);
-
 uint128_t::uint128_t(const std::string & s, uint8_t base) {
     init(s.c_str(), s.size(), base);
 }

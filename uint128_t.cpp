@@ -393,6 +393,13 @@ std::pair <uint128_t, uint128_t> uint128_t::divmod(const uint128_t & lhs, const 
         return std::pair <uint128_t, uint128_t> (uint128_0, lhs);
     }
 
+    // 64-bit shortcut
+    if (lhs.upper() == 0 && rhs.upper() == 0){
+        return std::pair <uint128_t, uint128_t> (
+                lhs.lower() / rhs.lower(),
+                lhs.lower() % rhs.lower());
+    }
+
     std::pair <uint128_t, uint128_t> qr (uint128_0, uint128_0);
     for(uint8_t x = lhs.bits(); x > 0; x--){
         qr.first  <<= uint128_1;

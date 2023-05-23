@@ -314,7 +314,6 @@ class uint128_t{
         }
 
     private:
-        std::pair <uint128_t, uint128_t> divmod(const uint128_t & lhs, const uint128_t & rhs) const;
         void ConvertToVector(std::vector<uint8_t> & current, const uint64_t & val) const;
         // do not use prefixes (0x, 0b, etc.)
         // if the input string is too long, only right most characters are read
@@ -376,6 +375,8 @@ class uint128_t{
 
         // Get string representation of value
         std::string str(uint8_t base = 10, const unsigned int & len = 0) const;
+
+        static std::pair <uint128_t, uint128_t> divmod(const uint128_t & lhs, const uint128_t & rhs);
 };
 
 // useful values

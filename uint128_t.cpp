@@ -378,7 +378,7 @@ void uint128_t::export_bits(std::vector<uint8_t> &ret) const {
     ConvertToVector(ret, const_cast<const uint64_t&>(LOWER));
 }
 
-std::pair <uint128_t, uint128_t> uint128_t::divmod(const uint128_t & lhs, const uint128_t & rhs) const{
+std::pair <uint128_t, uint128_t> uint128_t::divmod(const uint128_t & lhs, const uint128_t & rhs){
     // Save some calculations /////////////////////
     if (rhs == uint128_0){
         throw std::domain_error("Error: division or modulus by 0");

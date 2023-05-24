@@ -393,6 +393,16 @@ std::pair <uint128_t, uint128_t> uint128_t::divmod(const uint128_t & lhs, const 
         return std::pair <uint128_t, uint128_t> (uint128_0, lhs);
     }
 
+    // right shift shortcuts
+    if(rhs.upper() == 0) {
+        switch(rhs.lower()) {
+            case 2:  return std::pair <uint128_t, uint128_t> (lhs >> 1, lhs & 0b1);
+            case 4:  return std::pair <uint128_t, uint128_t> (lhs >> 2, lhs & 0b11);
+            case 8:  return std::pair <uint128_t, uint128_t> (lhs >> 3, lhs & 0b111);
+            case 16: return std::pair <uint128_t, uint128_t> (lhs >> 4, lhs & 0b1111);
+        }
+    }
+
     // 64-bit shortcut
     if (lhs.upper() == 0 && rhs.upper() == 0){
         return std::pair <uint128_t, uint128_t> (

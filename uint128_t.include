@@ -76,7 +76,7 @@ class uint128_t{
         uint128_t(const bool & b);
 
         template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-        uint128_t(const T & rhs)
+        constexpr uint128_t(const T & rhs)
 #ifdef __BIG_ENDIAN__
             : UPPER(0), LOWER(rhs)
 #endif
@@ -92,7 +92,7 @@ class uint128_t{
         }
 
         template <typename S, typename T, typename = typename std::enable_if <std::is_integral<S>::value && std::is_integral<T>::value, void>::type>
-        uint128_t(const S & upper_rhs, const T & lower_rhs)
+        constexpr uint128_t(const S & upper_rhs, const T & lower_rhs)
 #ifdef __BIG_ENDIAN__
             : UPPER(upper_rhs), LOWER(lower_rhs)
 #endif
@@ -219,12 +219,12 @@ class uint128_t{
 
         template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
         bool operator&&(const T & rhs) const{
-            return static_cast <bool> (*this && rhs);
+            return ((bool) *this && rhs);
         }
 
         template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
         bool operator||(const T & rhs) const{
-            return static_cast <bool> (*this || rhs);
+            return ((bool) *this || rhs);
         }
 
         // Comparison Operators
@@ -314,7 +314,6 @@ class uint128_t{
         }
 
     private:
-        std::pair <uint128_t, uint128_t> divmod(const uint128_t & lhs, const uint128_t & rhs) const;
         void ConvertToVector(std::vector<uint8_t> & current, const uint64_t & val) const;
         // do not use prefixes (0x, 0b, etc.)
         // if the input string is too long, only right most characters are read
@@ -376,11 +375,13 @@ class uint128_t{
 
         // Get string representation of value
         std::string str(uint8_t base = 10, const unsigned int & len = 0) const;
+
+        static std::pair <uint128_t, uint128_t> divmod(const uint128_t & lhs, const uint128_t & rhs);
 };
 
 // useful values
-UINT128_T_EXTERN extern const uint128_t uint128_0;
-UINT128_T_EXTERN extern const uint128_t uint128_1;
+static constexpr uint128_t uint128_0 = uint128_t(0);
+static constexpr uint128_t uint128_1 = uint128_t(1);
 
 // lhs type T as first arguemnt
 // If the output is not a bool, casts to type T
